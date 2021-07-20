@@ -1,0 +1,38 @@
+name: ivory_mapper
+
+on: [push]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        config:
+        - {
+            name: "Ubuntu_Latest_GCC",
+            os: ubuntu-latest,
+            compiler: "g++"
+          }
+    
+    name: ${{ matrix.config.name }}
+    
+    runs-on: ${{ matrix.config.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Configure CMake
+        run: cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+        env:
+          CXX: ${{ matrix.config.compiler }}
+
+      - name: Build
+        run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
+
+      - name: Test
+        working-directory: ${{ github.workspace }}/build
+        run: |
+          bin/mapper --version
+          bin/mapper_test
