@@ -15,9 +15,24 @@ jobs:
             os: ubuntu-latest,
             compiler: "g++"
           }
+        - {
+            name: "Ubuntu_Latest_Clang",
+            os: ubuntu-latest,
+            comiler: "clang++"
+          }
+        - {
+            name: "MacOS_Latest_GCC",
+            os: macos-latest,
+            compiler: "g++"
+          }
+        - {
+            name: "MacOS_Latest_Clang",
+            os: macos-latest,
+            compiler: "clang"
+          }
     
     name: ${{ matrix.config.name }}
-    
+
     runs-on: ${{ matrix.config.os }}
 
     steps:
