@@ -2,6 +2,10 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <stdlib.h>
+#include <vector>
+
+#include "bioparser/fasta_parser.hpp"
+#include "bioparser/fastq_parser.hpp"
 
 
 std::string VERSION = "0.1.0";
@@ -29,7 +33,7 @@ void ProcessArgs(int argc, char** argv) {
         switch (opt) {
             case 'v':
                 std::cout << "Version " << VERSION << std::endl;
-                break;
+                exit(1);
             case 'h':
             case '?':
             default:
@@ -37,6 +41,19 @@ void ProcessArgs(int argc, char** argv) {
                 break;
         }
     }
+
+    if (optind >= argc) {
+        std::cerr << "Error: Missing input file(s)" << std::endl;
+    }
+
+    std::vector<int> v;
+    for (int i = optind; i < argc; i++) {
+        std::cout << "Found sequence file: " << argv[i] << std::endl;
+    }
+    // Parse each file
+    // Append vector with sequences
+    // Each sequence should be FASTQ record - probably solved in biosoup / bioparser
+
 }
 
 int main(int argc, char **argv) {
