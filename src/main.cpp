@@ -33,7 +33,7 @@ void ProcessArgs(int argc, char** argv) {
         switch (opt) {
             case 'v':
                 std::cout << "Version " << VERSION << std::endl;
-                exit(1);
+                exit(0);
             case 'h':
             case '?':
             default:
