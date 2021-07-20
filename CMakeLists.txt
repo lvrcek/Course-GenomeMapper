@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.14)
 
 project(GenomeMapper VERSION 0.1.0
                      LANGUAGES CXX
@@ -22,14 +22,25 @@ if (NOT bioparser_FOUND)
     FetchContent_GetProperties(bioparser)
     if (NOT bioparser_POPULATED)
     FetchContent_Populate(bioparser)
-    add_subdirectory(
-        ${bioparser_SOURCE_DIR}
-        ${bioparser_BINARY_DIR}
-        EXCLUDE_FROM_ALL    
-    )
+    add_subdirectory(${bioparser_SOURCE_DIR} ${bioparser_BINARY_DIR})
     endif()
 endif()
 
-add_executable(mapper src/main.cpp)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.10.0
+)
+FetchContent_MakeAvailable(googletest)
 
+add_executable(mapper src/main.cpp)
 target_link_libraries(mapper bioparser::bioparser)
+
+enable_testing()
+
+add_executable(mapper_test test/mapper_test.cpp)
+target_link_libraries(mapper_test gtest_main)
+target_link_libraries(mapper_test bioparser::bioparser)
+
+include(GoogleTest)
+gtest_discover_tests(mapper_test)
