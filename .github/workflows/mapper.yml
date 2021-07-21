@@ -11,12 +11,12 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu_Latest_GCC",
+            name: "Ubuntu_Latest_GCC_9.3",
             os: "ubuntu-latest",
             compiler: "g++"
           }
         - {
-            name: "Ubuntu_Latest_Clang",
+            name: "Ubuntu_Latest_Clang_11.0",
             os: "ubuntu-latest",
             compiler: "clang++"
           }
@@ -30,16 +30,16 @@ jobs:
             os: "ubuntu-18.04",
             compiler: "clang++-4.0"
           }
-        # - {
-        #     name: "MacOS_Latest_GCC",
-        #     os: "macos-latest",
-        #     compiler: "g++"
-        #   }
-        # - {
-        #     name: "MacOS_Latest_Clang",
-        #     os: "macos-latest",
-        #     compiler: "clang++-11.0"
-        #   }
+        - {
+            name: "MacOS_Latest_GCC_9.4",
+            os: "macos-latest",
+            compiler: "gcc-9"
+          }
+        - {
+            name: "MacOS_Latest_Clang_11.0",
+            os: "macos-latest",
+            compiler: "clang"
+          }
     
     name: ${{ matrix.config.name }}
 
@@ -59,6 +59,11 @@ jobs:
         with:
           version: "4.0"
           platform: x64
+
+      - if: ${{ matrix.config.name == 'MacOS_Latest_Clang' }}
+        run: |
+          sudo xcode-select -s /Applications/Xcode_11.7.app/Contents/Developer
+          clang -v
 
       - name: Configure CMake
         run: cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
