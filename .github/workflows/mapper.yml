@@ -11,14 +11,24 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu_Latest_GCC",
+            name: Ubuntu_Latest_GCC,
             os: ubuntu-latest,
-            compiler: "g++"
+            compiler: g++
           }
         - {
-            name: "Ubuntu_Latest_Clang",
+            name: Ubuntu_Latest_Clang,
             os: ubuntu-latest,
-            comiler: "clang++"
+            compiler: clang++
+          }
+        - {
+            name: Ubuntu_18.04_GCC_4.8,
+            os: ubuntu-18.04,
+            compiler: g++-4.8
+          }
+        - {
+            name: Ubuntu_18.04_CLang_4.0,
+            os: ubuntu-18.04,
+            compiler: clang++-4.0
           }
         # - {
         #     name: "MacOS_Latest_GCC",
@@ -37,6 +47,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - if: ${{ matrix.config.name == "Ubuntu_18.04_GCC_4.8" }}
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: "4.8"
+          platform: x64
+
+      - if: ${{ matrix.config.name == "Ubuntu_18.04_CLang_4.0" }}
+        uses: egor-tensin/setup-clang@v1
+        with:
+          version: "4.0"
+          platform: x64
 
       - name: Configure CMake
         run: cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
