@@ -1,2 +1,5 @@
 # Compiled object files
 build/
+
+# Larga data files for testing
+test/data/
