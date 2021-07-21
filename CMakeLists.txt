@@ -6,7 +6,6 @@ project(GenomeMapper VERSION 0.1.0
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_CXX_FLAGS -std=c++11)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
@@ -27,21 +26,23 @@ if (NOT bioparser_FOUND)
     endif()
 endif()
 
-FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG release-1.10.0
-)
-FetchContent_MakeAvailable(googletest)
+find_package(GTest 1.10.0 QUIET)
+if (NOT GTest_FOUND)
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG release-1.10.0
+    )
+    FetchContent_MakeAvailable(googletest)
+    add_library(GTest::Main ALIAS gtest_main)
 
 add_executable(mapper src/main.cpp)
-target_link_libraries(mapper gtest_main)
 target_link_libraries(mapper bioparser::bioparser)
 
 enable_testing()
 
 add_executable(mapper_test test/mapper_test.cpp)
-target_link_libraries(mapper_test gtest_main)
+target_link_libraries(mapper_test GTest::Main)
 target_link_libraries(mapper_test bioparser::bioparser)
 
 include(GoogleTest)
