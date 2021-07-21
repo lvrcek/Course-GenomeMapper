@@ -6,6 +6,7 @@ project(GenomeMapper VERSION 0.1.0
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_FLAGS -std=c++11)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
@@ -34,6 +35,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 add_executable(mapper src/main.cpp)
+target_link_libraries(mapper gtest_main)
 target_link_libraries(mapper bioparser::bioparser)
 
 enable_testing()
