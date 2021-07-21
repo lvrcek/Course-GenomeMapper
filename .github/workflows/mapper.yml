@@ -30,11 +30,11 @@ jobs:
             os: "ubuntu-18.04",
             compiler: "clang++-4.0"
           }
-        - {
-            name: "MacOS_Latest_GCC",
-            os: "macos-latest",
-            compiler: "gcc"
-          }
+        # - {
+        #     name: "MacOS_Latest_GCC",
+        #     os: "macos-latest",
+        #     compiler: "gcc"
+        #   }
         # - {
         #     name: "MacOS_Latest_Clang",
         #     os: "macos-latest",
