@@ -30,11 +30,11 @@ jobs:
             os: "ubuntu-18.04",
             compiler: "clang++-4.0"
           }
-        - {
-            name: "MacOS_Latest_GCC_9.4",
-            os: "macos-latest",
-            compiler: "gcc-9"
-          }
+        # - {
+        #     name: "MacOS_Latest_GCC_9.4",
+        #     os: "macos-latest",
+        #     compiler: "gcc-9"
+        #   }
         - {
             name: "MacOS_Latest_Clang_11.0",
             os: "macos-latest",
@@ -60,7 +60,7 @@ jobs:
           version: "4.0"
           platform: x64
 
-      - if: ${{ matrix.config.name == 'MacOS_Latest_Clang' }}
+      - if: ${{ matrix.config.name == 'MacOS_Latest_Clang_11.0' }}
         run: |
           sudo xcode-select -s /Applications/Xcode_11.7.app/Contents/Developer
           clang -v
