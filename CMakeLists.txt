@@ -35,6 +35,7 @@ if (NOT GTest_FOUND)
     )
     FetchContent_MakeAvailable(googletest)
     add_library(GTest::Main ALIAS gtest_main)
+endif()
 
 add_executable(mapper src/main.cpp)
 target_link_libraries(mapper bioparser::bioparser)
