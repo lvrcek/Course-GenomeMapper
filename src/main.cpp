@@ -13,7 +13,7 @@ std::string VERSION = "0.1.0";
 
 void PrintHelp() {
     std::cout <<
-            "--version:     Print the version of the program\n"
+            "-v, --version: Print the version of the program\n"
             "-h, --help:    Show help\n";
     exit(1);
 }
@@ -43,12 +43,25 @@ void ProcessArgs(int argc, char** argv) {
     }
 
     if (optind >= argc) {
-        std::cerr << "Error: Missing input file(s)" << std::endl;
+        std::cerr << "Error: Missing refernce and sequence files" << std::endl;
+        exit(1);
+    }
+
+    //optind++;
+    std::cout << argc << " " << *argv << " " << optind << std::endl;
+    std::cout << "Found reference file: " << argv[optind] << std::endl;
+    optind++;
+    // assert FASTA
+
+    if (optind >= argc) {
+        std::cerr << "Error: Missing sequence file(s)" << std::endl;
+        exit(1);
     }
 
     std::vector<int> v;
     for (int i = optind; i < argc; i++) {
         std::cout << "Found sequence file: " << argv[i] << std::endl;
+        // assert FASTA/Q
     }
     // Parse each file
     // Append vector with sequences
