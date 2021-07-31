@@ -3,6 +3,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <vector>
+#include <string>
 
 #include "bioparser/fasta_parser.hpp"
 #include "bioparser/fastq_parser.hpp"
@@ -10,6 +11,35 @@
 
 std::string VERSION = "0.1.0";
 
+
+struct FASTASequence {
+  public:
+    std::string name;
+    std::string data;
+
+    FASTASequence(const char* name, std::uint32_t name_len,
+                  const char* data, std::uint32_t data_len) {
+        this->name = name;
+        this->data = data;
+        // std::cout << this->name << std::endl;
+        // std::cout << this->data << std::endl;
+    }
+};
+
+struct FASTQSequence {
+  public:
+    std::string name;
+    std::string data;
+    std::string quality;
+
+    FASTQSequence(const char* name, std::uint32_t name_len,
+                  const char* data, std::uint32_t data_len,
+                  const char* quality, std::uint32_t quality_len) {
+        this->name = name;
+        this->data = data;
+        this->quality = quality;
+    }
+};
 
 void PrintHelp() {
     std::cout <<
@@ -50,8 +80,18 @@ void ProcessArgs(int argc, char** argv) {
     //optind++;
     std::cout << argc << " " << *argv << " " << optind << std::endl;
     std::cout << "Found reference file: " << argv[optind] << std::endl;
+    std::string fasta_path = argv[optind];
     optind++;
+
+    const char *ss = "abc";
+    const char *aa = "lololol";
+    // FASTASequence fasta(ss, 3, aa, 5);
     // assert FASTA
+
+    auto p = bioparser::Parser<FASTASequence>::Create<bioparser::FastaParser>(fasta_path);
+    auto s = p->Parse(-1);
+    FASTASequence fasta = *s[0];
+    std::cout << fasta.name.substr(0, 200) << std::endl;
 
     if (optind >= argc) {
         std::cerr << "Error: Missing sequence file(s)" << std::endl;
