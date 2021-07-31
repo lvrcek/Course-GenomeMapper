@@ -19,8 +19,8 @@ struct FASTASequence {
 
     FASTASequence(const char* name, std::uint32_t name_len,
                   const char* data, std::uint32_t data_len) {
-        this->name = name;
-        this->data = data;
+        this->name = std::string(name, name_len);
+        this->data = std::string(data, data_len);
         // std::cout << this->name << std::endl;
         // std::cout << this->data << std::endl;
     }
@@ -35,9 +35,9 @@ struct FASTQSequence {
     FASTQSequence(const char* name, std::uint32_t name_len,
                   const char* data, std::uint32_t data_len,
                   const char* quality, std::uint32_t quality_len) {
-        this->name = name;
-        this->data = data;
-        this->quality = quality;
+        this->name = std::string(name, name_len);
+        this->data = std::string(data, data_len);
+        this->quality = std::string(quality, quality_len);
     }
 };
 
@@ -91,7 +91,8 @@ void ProcessArgs(int argc, char** argv) {
     auto p = bioparser::Parser<FASTASequence>::Create<bioparser::FastaParser>(fasta_path);
     auto s = p->Parse(-1);
     FASTASequence fasta = *s[0];
-    std::cout << fasta.name.substr(0, 200) << std::endl;
+    std::cout << fasta.name << std::endl;
+    std::cout << fasta.data.substr(0, 50) << std::endl;
 
     if (optind >= argc) {
         std::cerr << "Error: Missing sequence file(s)" << std::endl;
@@ -101,6 +102,14 @@ void ProcessArgs(int argc, char** argv) {
     std::vector<int> v;
     for (int i = optind; i < argc; i++) {
         std::cout << "Found sequence file: " << argv[i] << std::endl;
+        std::string fastq_path = argv[i];
+        auto p = bioparser::Parser<FASTASequence>::Create<bioparser::FastaParser>(fastq_path);
+        auto s = p->Parse(-1);
+        FASTASequence fastq = *s[0];
+        std::cout << fastq.name << std::endl;
+        std::cout << fastq.data.substr(0, 50) << std::endl;
+        std::cout << s.size() << std::endl;
+        // std::cout << fastq.quality.substr(0, 50)  << std::endl;
         // assert FASTA/Q
     }
     // Parse each file
