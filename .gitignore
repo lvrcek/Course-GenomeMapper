@@ -3,3 +3,6 @@ build/
 
 # Larga data files for testing
 test/data/
+
+# Misc
+.vscode/
