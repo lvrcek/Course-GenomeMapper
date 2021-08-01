@@ -77,8 +77,18 @@ void PrintStatistics(std::vector<Sequence> sequences, int mode) {
 
 void PrintHelp() {
     std::cout <<
-            "-v, --version: Print the version of the program\n"
-            "-h, --help:    Show help\n";
+            "usage: ivory_mapper [options ...] <reference> <fragments> [<fragments> ...]\n"
+            "\n"
+            "  <reference>\n"
+            "    input file containing reference in FASTA format (can be compressed with gzip)\n"
+            "  <fragments>\n"
+            "    input file containing fragments in FASTA/Q format (can be compressed with gzip)\n"
+            "  options:\n"
+            "    -v, --version\n"
+            "      print the version of the program\n"
+            "    -h, --help\n"
+            "      show help\n";
+
     exit(1);
 }
 
@@ -102,13 +112,12 @@ void ProcessArgs(int argc, char** argv) {
             case '?':
             default:
                 PrintHelp();
-                break;
         }
     }
 
     if (optind >= argc) {
         std::cerr << "Error: Missing refernce and sequence files" << std::endl;
-        exit(1);
+        PrintHelp();
     }
 
     std::string fasta_path = argv[optind];
@@ -124,7 +133,7 @@ void ProcessArgs(int argc, char** argv) {
 
     if (optind >= argc) {
         std::cerr << "Error: Missing sequence file(s)" << std::endl;
-        exit(1);
+        PrintHelp();
     }
 
     std::vector<Sequence> v2;
@@ -138,11 +147,11 @@ void ProcessArgs(int argc, char** argv) {
         Sequence fastq = *s[0];
         v2.push_back(fastq);
     }
-    
+
     PrintStatistics(v2, 2);
 }
 
 int main(int argc, char **argv) {
     ProcessArgs(argc, argv);
-    exit(0);
+    return 0;
 }
