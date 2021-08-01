@@ -2,14 +2,14 @@
 
 ![example workflow](https://github.com/lvrcek/Course-GenomeMapper/actions/workflows/mapper.yml/badge.svg)
 
-This is an implementation of the [Genome Mapper Course](https://github.com/lbcb-edu/Course-GenomeMapper).
-The goal of the course is to implement a toy mapper for genomic sequences inspired by [minimap2](https://github.com/lh3/minimap).
+This is an implementation of the [Genome Mapper Course](https://github.com/lbcb-edu/Course-GenomeMapper), where **ivory** stands for the color to differentiate it from other implementations.
+The goal of the course is to implement a toy mapper for genomic sequences inspired by [minimap](https://github.com/lh3/minimap).
 More about the course can also be found in the [docs](docs/README.md).
 
 ## Installation
 Run the following commands to build the project and create the `ivory_mapper` executable inside the `build/bin`:
 ```bash
-git clone https://github.com/lvrcek/Course-GenomeMapper.git ivory_mapper
+git clone https://github.com/lvrcek/ivory-genome-mapper.git ivory_mapper
 cd ivory_mapper && mkdir build && cd build
 cmake .. && make
 ```
