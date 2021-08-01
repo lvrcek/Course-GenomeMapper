@@ -37,8 +37,8 @@ struct Sequence {
 
 void PrintStatistics(std::vector<Sequence> sequences, int mode) {
     int num_sequences = sequences.size();
-    int total_len = 0, n50 = 0;
-    int min_len, max_len, mean_len;
+    int total_len = 0, n50_sum = 0;
+    int min_len, max_len, mean_len, n50;
     std::vector<int> lengths;
 
     for (auto it = sequences.begin(); it != sequences.end(); it++) {
@@ -52,8 +52,8 @@ void PrintStatistics(std::vector<Sequence> sequences, int mode) {
     mean_len = total_len / num_sequences;
 
     for (int i = 0; i < num_sequences; i++) {
-        n50 += lengths[i];
-        if (n50 >= total_len / 2) {
+        n50_sum += lengths[i];
+        if (n50_sum >= total_len * 0.5) {
             n50 = lengths[i];
             break;
         }
