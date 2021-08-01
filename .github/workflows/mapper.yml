@@ -76,5 +76,5 @@ jobs:
       - name: Test
         working-directory: ${{ github.workspace }}/build
         run: |
-          bin/mapper --version
-          bin/mapper_test
+          bin/ivory_mapper --version
+          bin/ivory_mapper_test

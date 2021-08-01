@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(GenomeMapper VERSION 0.1.0
+project(Genomeivory_mapper VERSION 0.1.0
                      LANGUAGES CXX
-                     DESCRIPTION "A simple mapper for long genomic reads")
+                     DESCRIPTION "A simple ivory_mapper for long genomic reads")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -37,14 +37,14 @@ if (NOT GTest_FOUND)
     add_library(GTest::Main ALIAS gtest_main)
 endif()
 
-add_executable(mapper src/main.cpp)
-target_link_libraries(mapper bioparser::bioparser)
+add_executable(ivory_mapper src/main.cpp)
+target_link_libraries(ivory_mapper bioparser::bioparser)
 
 enable_testing()
 
-add_executable(mapper_test test/mapper_test.cpp)
-target_link_libraries(mapper_test GTest::Main)
-target_link_libraries(mapper_test bioparser::bioparser)
+add_executable(ivory_mapper_test test/ivory_mapper_test.cpp)
+target_link_libraries(ivory_mapper_test GTest::Main)
+target_link_libraries(ivory_mapper_test bioparser::bioparser)
 
 include(GoogleTest)
-gtest_discover_tests(mapper_test)
+gtest_discover_tests(ivory_mapper_test)
