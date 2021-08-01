@@ -86,8 +86,6 @@ void PrintHelp() {
             "      print the version of the program\n"
             "    -h, --help\n"
             "      show help\n";
-
-    exit(1);
 }
 
 void ProcessArgs(int argc, char** argv, std::vector<Sequence>* reference, std::vector<Sequence>* fragments) {
@@ -107,30 +105,63 @@ void ProcessArgs(int argc, char** argv, std::vector<Sequence>* reference, std::v
                 std::cout << "v" << VERSION << std::endl;
                 exit(0);
             case 'h':
+                PrintHelp();
+                exit(0);
             case '?':
             default:
                 PrintHelp();
+                exit(1);
         }
     }
 
     if (optind >= argc) {
         std::cerr << "Error: Missing refernce and sequence files" << std::endl;
         PrintHelp();
+        exit(1);
     }
 
-    auto p = bioparser::Parser<Sequence>::Create<bioparser::FastaParser>(argv[optind++]);
+    auto ends_with = [](const std::string &a, const std::string &b) {
+        if (a.size() >= b.size())
+            return (a.compare(a.size() - b.size(), b.size(), b) == 0);
+        else
+            return false;
+    };
+
+    std::string path = argv[optind++];
+    if (!(ends_with(path, ".fasta") || ends_with(path, ".fasta.gz") ||
+          ends_with(path, ".fna") || ends_with(path, ".fna.gz") ||
+          ends_with(path, ".fa") || ends_with(path, ".fa.gz"))) {
+        std::cerr << "Error: Unsupported file type" << std::endl;
+        PrintHelp();
+        exit(1);
+        }
+
+    auto p = bioparser::Parser<Sequence>::Create<bioparser::FastaParser>(path);
     auto s = p->Parse(-1);
     for (auto it = s.begin(); it != s.end(); it++) {
-        (*reference).push_back(**it);
+        reference->push_back(**it);
     }
 
     if (optind >= argc) {
         std::cerr << "Error: Missing sequence file(s)" << std::endl;
         PrintHelp();
+        exit(1);
     }
 
     for (int i = optind; i < argc; i++) {
-        auto p = bioparser::Parser<Sequence>::Create<bioparser::FastaParser>(argv[i]);
+
+        std::string path = argv[i];
+        if (!(ends_with(path, ".fasta") || ends_with(path, ".fasta.gz") ||
+              ends_with(path, ".fastq") || ends_with(path, ".fastq.gz") ||
+              ends_with(path, ".fna") || ends_with(path, ".fna.gz") ||
+              ends_with(path, ".fa") || ends_with(path, ".fa.gz") ||
+              ends_with(path, ".fq") || ends_with(path, ".fq.gz"))) {
+            std::cerr << "Error: Unsupported file type" << std::endl;
+            PrintHelp();
+            exit(1);
+        }
+
+        auto p = bioparser::Parser<Sequence>::Create<bioparser::FastaParser>(path);
         auto s = p->Parse(-1);
         for (auto it = s.begin(); it != s.end(); it++) {
             fragments->push_back(**it);
