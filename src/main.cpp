@@ -35,15 +35,15 @@ struct Sequence {
 
 };
 
-void PrintStatistics(std::vector<Sequence> sequences, int mode) {
+void PrintStatistics(std::vector<std::unique_ptr<Sequence>>& sequences, int mode) {
     int num_sequences = sequences.size();
     int total_len = 0, n50_sum = 0;
     int min_len, max_len, mean_len, n50;
     std::vector<int> lengths;
 
     for (auto it = sequences.begin(); it != sequences.end(); it++) {
-        lengths.push_back(it->data.size());
-        total_len += it->data.size();
+        lengths.push_back((*it)->data.size());
+        total_len += (*it)->data.size();
     }
 
     std::sort(lengths.begin(), lengths.end(), [](int a, int b) {return a > b;});
@@ -88,7 +88,9 @@ void PrintHelp() {
             "      show help\n";
 }
 
-void ProcessArgs(int argc, char** argv, std::vector<Sequence>* reference, std::vector<Sequence>* fragments) {
+void ProcessArgs(int argc, char** argv,
+                 std::vector<std::unique_ptr<Sequence>>& reference,
+                 std::vector<std::unique_ptr<Sequence>>& fragments) {
     const char* short_opts = "vh";
     const option long_opts[] = {
         {"version", no_argument, nullptr, 'v'},
@@ -137,10 +139,7 @@ void ProcessArgs(int argc, char** argv, std::vector<Sequence>* reference, std::v
         }
 
     auto p = bioparser::Parser<Sequence>::Create<bioparser::FastaParser>(path);
-    auto s = p->Parse(-1);
-    for (auto it = s.begin(); it != s.end(); it++) {
-        reference->push_back(**it);
-    }
+    reference = p->Parse(-1);
 
     if (optind >= argc) {
         std::cerr << "Error: Missing sequence file(s)" << std::endl;
@@ -149,7 +148,6 @@ void ProcessArgs(int argc, char** argv, std::vector<Sequence>* reference, std::v
     }
 
     for (int i = optind; i < argc; i++) {
-
         std::string path = argv[i];
         if (!(ends_with(path, ".fasta") || ends_with(path, ".fasta.gz") ||
               ends_with(path, ".fastq") || ends_with(path, ".fastq.gz") ||
@@ -163,15 +161,13 @@ void ProcessArgs(int argc, char** argv, std::vector<Sequence>* reference, std::v
 
         auto p = bioparser::Parser<Sequence>::Create<bioparser::FastaParser>(path);
         auto s = p->Parse(-1);
-        for (auto it = s.begin(); it != s.end(); it++) {
-            fragments->push_back(**it);
-        }
+        fragments.insert(fragments.end(), std::make_move_iterator(s.begin()), std::make_move_iterator(s.end()));
     }
 }
 
 int main(int argc, char **argv) {
-    std::vector<Sequence> reference, fragments;
-    ProcessArgs(argc, argv, &reference, &fragments);
+    std::vector<std::unique_ptr<Sequence>> reference, fragments;
+    ProcessArgs(argc, argv, reference, fragments);
     PrintStatistics(reference, 1);
     PrintStatistics(fragments, 2);
     return 0;
