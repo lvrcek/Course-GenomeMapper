@@ -20,13 +20,13 @@ struct Sequence {
     std::string quality;
 
     Sequence(const char* name, std::uint32_t name_len,
-                  const char* data, std::uint32_t data_len) :
+             const char* data, std::uint32_t data_len) :
                   name(name, name_len),
                   data(data, data_len) {}
 
     Sequence(const char* name, std::uint32_t name_len,
-                  const char* data, std::uint32_t data_len,
-                  const char* quality, std::uint32_t quality_len) :
+             const char* data, std::uint32_t data_len,
+             const char* quality, std::uint32_t quality_len) :
                   name(name, name_len),
                   data(data, data_len),
                   quality(quality, quality_len) {}
