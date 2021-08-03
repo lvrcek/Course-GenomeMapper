@@ -20,22 +20,19 @@ struct Sequence {
     std::string quality;
 
     Sequence(const char* name, std::uint32_t name_len,
-                  const char* data, std::uint32_t data_len) {
-        this->name = std::string(name, name_len);
-        this->data = std::string(data, data_len);
-    }
+                  const char* data, std::uint32_t data_len) :
+                  name(name, name_len),
+                  data(data, data_len) {}
 
     Sequence(const char* name, std::uint32_t name_len,
                   const char* data, std::uint32_t data_len,
-                  const char* quality, std::uint32_t quality_len) {
-        this->name = std::string(name, name_len);
-        this->data = std::string(data, data_len);
-        this->quality = std::string(quality, quality_len);
-    }
-
+                  const char* quality, std::uint32_t quality_len) :
+                  name(name, name_len),
+                  data(data, data_len),
+                  quality(quality, quality_len) {}
 };
 
-void PrintStatistics(std::vector<std::unique_ptr<Sequence>>& sequences, int mode) {
+void PrintStatistics(const std::vector<std::unique_ptr<Sequence>>& sequences, int mode) {
     int num_sequences = sequences.size();
     int total_len = 0, n50_sum = 0;
     int min_len, max_len, mean_len, n50;
