@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(Genomeivory_mapper VERSION 0.1.0
+project(ivory_mapper VERSION 0.1.0
                      LANGUAGES CXX
                      DESCRIPTION "A simple ivory_mapper for long genomic reads")
 

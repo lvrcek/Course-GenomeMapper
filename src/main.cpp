@@ -1,7 +1,10 @@
-#include <iostream>
+// Copyright (c) 2021 Lovro Vrcek
+
 #include <unistd.h>
 #include <getopt.h>
 #include <stdlib.h>
+
+#include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -9,12 +12,11 @@
 #include "bioparser/fasta_parser.hpp"
 #include "bioparser/fastq_parser.hpp"
 
-
-std::string VERSION = "0.1.0";
+#define VERSION "0.1.0"
 
 
 struct Sequence {
-  public:
+ public:
     std::string name;
     std::string data;
     std::string quality;
@@ -32,7 +34,7 @@ struct Sequence {
                   quality(quality, quality_len) {}
 };
 
-void PrintStatistics(const std::vector<std::unique_ptr<Sequence>>& sequences, int mode) {
+void PrintStatistics(const std::vector<std::unique_ptr<Sequence>>& sequences, int mode) {  // NOLINT
     int num_sequences = sequences.size();
     int total_len = 0, n50_sum = 0;
     int min_len, max_len, mean_len, n50;
@@ -72,12 +74,12 @@ void PrintStatistics(const std::vector<std::unique_ptr<Sequence>>& sequences, in
 
 void PrintHelp() {
     std::cout <<
-            "usage: ivory_mapper [options ...] <reference> <fragments> [<fragments> ...]\n"
+            "usage: ivory_mapper [options ...] <reference> <fragments> [<fragments> ...]\n"  // NOLINT
             "\n"
             "  <reference>\n"
-            "    input file containing reference in FASTA format (can be compressed with gzip)\n"
+            "    input file containing reference in FASTA format (can be compressed with gzip)\n"  // NOLINT
             "  <fragments>\n"
-            "    input file containing fragments in FASTA/Q format (can be compressed with gzip)\n"
+            "    input file containing fragments in FASTA/Q format (can be compressed with gzip)\n"  // NOLINT
             "  options:\n"
             "    -v, --version\n"
             "      print the version of the program\n"
@@ -86,8 +88,8 @@ void PrintHelp() {
 }
 
 void ProcessArgs(int argc, char** argv,
-                 std::vector<std::unique_ptr<Sequence>>& reference,
-                 std::vector<std::unique_ptr<Sequence>>& fragments) {
+                 std::vector<std::unique_ptr<Sequence>>* reference,
+                 std::vector<std::unique_ptr<Sequence>>* fragments) {
     const char* short_opts = "vh";
     const option long_opts[] = {
         {"version", no_argument, nullptr, 'v'},
@@ -96,7 +98,7 @@ void ProcessArgs(int argc, char** argv,
     };
 
     while (true) {
-        const auto opt = getopt_long(argc, argv, short_opts, long_opts, nullptr);
+        const auto opt = getopt_long(argc, argv, short_opts, long_opts, nullptr);  // NOLINT
         if (opt == -1)
             break;
         switch (opt) {
@@ -136,7 +138,7 @@ void ProcessArgs(int argc, char** argv,
         }
 
     auto p = bioparser::Parser<Sequence>::Create<bioparser::FastaParser>(path);
-    reference = p->Parse(-1);
+    *reference = p->Parse(-1);
 
     if (optind >= argc) {
         std::cerr << "Error: Missing sequence file(s)" << std::endl;
@@ -156,15 +158,17 @@ void ProcessArgs(int argc, char** argv,
             exit(1);
         }
 
-        auto p = bioparser::Parser<Sequence>::Create<bioparser::FastaParser>(path);
+        auto p = bioparser::Parser<Sequence>::Create<bioparser::FastaParser>(path);  // NOLINT
         auto s = p->Parse(-1);
-        fragments.insert(fragments.end(), std::make_move_iterator(s.begin()), std::make_move_iterator(s.end()));
+        fragments->insert(fragments->end(),
+                          std::make_move_iterator(s.begin()),
+                          std::make_move_iterator(s.end()));
     }
 }
 
 int main(int argc, char **argv) {
     std::vector<std::unique_ptr<Sequence>> reference, fragments;
-    ProcessArgs(argc, argv, reference, fragments);
+    ProcessArgs(argc, argv, &reference, &fragments);
     PrintStatistics(reference, 1);
     PrintStatistics(fragments, 2);
     return 0;
