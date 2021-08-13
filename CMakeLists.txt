@@ -7,6 +7,8 @@ project(ivory_mapper VERSION 0.1.0
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 include(FetchContent)
@@ -37,8 +39,15 @@ if (NOT GTest_FOUND)
     add_library(GTest::Main ALIAS gtest_main)
 endif()
 
+# add_library(ivory_alignment_engine
+#     include/alignment.cpp
+# )
+
 add_executable(ivory_mapper src/main.cpp)
-target_link_libraries(ivory_mapper bioparser::bioparser)
+
+target_link_libraries(ivory_mapper
+    bioparser::bioparser
+)
 
 enable_testing()
 

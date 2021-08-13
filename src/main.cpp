@@ -9,10 +9,12 @@
 #include <string>
 #include <algorithm>
 
+#include "alignment.hpp"
+
 #include "bioparser/fasta_parser.hpp"
 #include "bioparser/fastq_parser.hpp"
 
-#define VERSION "0.1.0"
+#define VERSION "0.2.0"
 
 
 struct Sequence {
