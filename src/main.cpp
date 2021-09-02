@@ -170,12 +170,14 @@ void ProcessArgs(int argc, char** argv,
 }
 
 void TestAligner() {
-    const char* query = "GATTACA";
+    int score;
+    const char* query = "ACCTAAGG";
     unsigned int query_len = std::string(query).size();
-    const char* target = "GCATGCU";
+    const char* target = "GGCTCAATCA";
     unsigned int target_len = std::string(target).size();
-    ivory_aligner::AlignmentType type = ivory_aligner::global;
-    int score = ivory_aligner::Align(query, query_len, target, target_len, type, 1, -1, -1);
+    score = ivory_aligner::Align(query, query_len, target, target_len, ivory_aligner::global, 1, -1, -1);
+    std::cout << "Alignment score: " << score << std::endl;
+    score = ivory_aligner::Align(query, query_len, target, target_len, ivory_aligner::local, 2, -1, -2);
     std::cout << "Alignment score: " << score << std::endl;
 }
 
