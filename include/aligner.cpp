@@ -70,8 +70,39 @@ int LocalAlignment(const char* query, unsigned int query_len,
 }
 
 
-void SemiGlobalAlignment() {
-    return;
+int SemiGlobalAlignment(const char* query, unsigned int query_len,
+                     const char* target, unsigned int target_len,
+                     int match, int mismatch, int gap) {
+    int** matrix = new int*[query_len + 1];
+    for (int i = 0; i < query_len + 1; i++) {
+        matrix[i] = new int[target_len + 1];
+    }
+
+    for (int j = 0; j < target_len + 1; j++)
+        matrix[0][j] = 0;
+    
+    for (int i = 0; i < query_len  + 1; i++)
+        matrix[i][0] = 0;
+
+    int score = 0;
+    int end_query = 0, end_target = 0;
+
+    for (int i = 1; i < query_len + 1; i++) {
+        for (int j = 1; j < target_len + 1; j++) {
+            int diag = matrix[i-1][j-1] + ((query[i-1] == target[j-1]) ? match : mismatch);
+            int up = matrix[i-1][j] + gap;
+            int left = matrix[i][j-1] + gap;
+            matrix[i][j] = std::max({diag, up, left});
+            if ( (i == query_len || j == target_len) &&  matrix[i][j] > score) {
+                score = matrix[i][j];
+                end_query = i;
+                end_target = j;
+            }
+        }
+    }
+    printf("\n");
+    PrintMatrix(matrix, query, query_len, target, target_len);
+    return score;
 }
 
 void PrintMatrix(int** matrix, const char * query, unsigned int query_len,
@@ -110,7 +141,7 @@ int Align(
             alignment_score = LocalAlignment(query, query_len, target, target_len, match, mismatch, gap);
             break;
         case semiglobal:
-            SemiGlobalAlignment();
+            alignment_score = SemiGlobalAlignment(query, query_len, target, target_len, match, mismatch, gap);
             break;
     }
 

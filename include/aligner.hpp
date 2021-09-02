@@ -13,7 +13,9 @@ int LocalAlignment(const char* query, unsigned int query_len,
                      const char* target, unsigned int target_len,
                      int match, int mismatch, int gap);
 
-void SemiGlobalAlignment();
+int SemiGlobalAlignment(const char* query, unsigned int query_len,
+                     const char* target, unsigned int target_len,
+                     int match, int mismatch, int gap);
 
 void PrintMatrix(int** matrix, const char* query, unsigned int query_len, const char* target, unsigned int target_len);
 
