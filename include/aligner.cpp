@@ -1,28 +1,82 @@
+#include <cstdio>
 #include <iostream>
 #include <string>
+#include <algorithm>
+
+#include "aligner.hpp"
 
 namespace ivory_aligner {
 
-enum AlignmentType { global, local, semiglobal };
+int GlobalAlignment(const char* query, unsigned int query_len,
+                     const char* target, unsigned int target_len,
+                     int match, int mismatch, int gap) {
+    int** matrix = new int*[query_len + 1];
+    for (int i = 0; i < query_len + 1; i++) {
+        matrix[i] = new int[target_len + 1];
+    }
 
-void NeedlemanWunsch() {}
+    for (int j = 0; j < target_len + 1; j++)
+        matrix[0][j] = mismatch * j;
+    
+    for (int i = 0; i < query_len  + 1; i++)
+        matrix[i][0] = mismatch * i;
 
-void SmithWaterman() {}
+    for (int i = 1; i < query_len + 1; i++) {
+        for (int j = 1; j < target_len + 1; j++) {
+            int diag = matrix[i-1][j-1] + ((query[i-1] == target[j-1]) ? match : mismatch);
+            int up = matrix[i-1][j] + gap;
+            int left = matrix[i][j-1] + gap;
+            matrix[i][j] = std::max({diag, up, left});
+        }
+    }
+    printf("\n");
+    PrintMatrix(matrix, query, query_len, target, target_len);
+    return matrix[query_len][target_len];
+}
 
-void SemiGlobal() {} 
+void LocalAlignment() {
+    return;
+}
+
+void SemiGlobalAlignment() {
+    return;
+}
+
+void PrintMatrix(int** matrix, const char * query, unsigned int query_len,
+                 const char* target, unsigned int target_len) {
+    printf("%4c%4c", ' ', ' ');
+    for (int j = 0; j < target_len; j++)
+        printf("%4c", target[j]);
+    printf("\n");
+    printf("%4c", ' ');
+    for (int i = 0; i < query_len + 1; i++) {
+        for (int j = 0; j < target_len + 1; j++)
+            printf("%4d", matrix[i][j]);
+        printf("\n");
+        printf("%4c", query[i]);
+    }
+    printf("\n");
+}
 
 int Align(
-    const char* query, unsigned int query_len,
-    const char* target, unsigned int target_len,
-    AlignmentType type,
-    int match,
-    int mismatch,
-    int gap,
-    std::string* cigar,
-    unsigned int* target_begin) { return 0; }
+        const char* query, unsigned int query_len,
+        const char* target, unsigned int target_len,
+        AlignmentType type,
+        int match,
+        int mismatch,
+        int gap,
+        std::string* cigar,
+        unsigned int* target_begin) {
+    
+    int alignment_score;
 
-void Test() {
-    std::cout << "Test aligner" << std::endl;
+    switch(type) {
+        case global : alignment_score = GlobalAlignment(query, query_len, target, target_len, match, mismatch, gap); break;
+        case local  : LocalAlignment(); break;
+        case semiglobal: SemiGlobalAlignment(); break;
+    }
+
+    return alignment_score;
 }
 
 }

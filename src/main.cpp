@@ -169,9 +169,20 @@ void ProcessArgs(int argc, char** argv,
     }
 }
 
+void TestAligner() {
+    const char* query = "GATTACA";
+    unsigned int query_len = std::string(query).size();
+    const char* target = "GCATGCU";
+    unsigned int target_len = std::string(target).size();
+    ivory_aligner::AlignmentType type = ivory_aligner::global;
+    int score = ivory_aligner::Align(query, query_len, target, target_len, type, 1, -1, -1);
+    std::cout << "Alignment score: " << score << std::endl;
+}
+
 int main(int argc, char **argv) {
     std::vector<std::unique_ptr<Sequence>> reference, fragments;
-    ivory_aligner::Test();
+    TestAligner();
+    return 0;
     ProcessArgs(argc, argv, &reference, &fragments);
     PrintStatistics(reference, 1);
     PrintStatistics(fragments, 2);

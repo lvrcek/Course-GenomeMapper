@@ -5,11 +5,15 @@ namespace ivory_aligner {
 
 enum AlignmentType { global, local, semiglobal };
 
-void NeedlemanWunsch();
+int GlobalAlignment(const char* query, unsigned int query_len,
+                     const char* target, unsigned int target_len,
+                     int match, int mismatch, int gap);
 
-void SmithWaterman();
+void LocalAlignment();
 
-void SemiGlobal();
+void SemiGlobalAlignment();
+
+void PrintMatrix(int** matrix, const char* query, unsigned int query_len, const char* target, unsigned int target_len);
 
 int Align(
     const char* query, unsigned int query_len,
@@ -18,9 +22,6 @@ int Align(
     int match,
     int mismatch,
     int gap,
-    std::string* cigar,
-    unsigned int* target_begin);
-
-void Test();
-
+    std::string* cigar = nullptr,
+    unsigned int* target_begin = nullptr);
 }
