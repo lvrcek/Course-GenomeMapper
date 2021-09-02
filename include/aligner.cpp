@@ -1,5 +1,3 @@
-// Copyright (c) 2021 Lovro Vrcek
-
 #include <iostream>
 #include <string>
 
@@ -7,11 +5,11 @@ namespace ivory_aligner {
 
 enum AlignmentType { global, local, semiglobal };
 
-void NeedlemanWunsch();
+void NeedlemanWunsch() {}
 
-void SmithWaterman();
+void SmithWaterman() {}
 
-void SemiGlobal();
+void SemiGlobal() {} 
 
 int Align(
     const char* query, unsigned int query_len,
@@ -20,6 +18,11 @@ int Align(
     int match,
     int mismatch,
     int gap,
-    std::string* cigar = nullptr,
-    unsigned int* target_begin = nullptr);
+    std::string* cigar,
+    unsigned int* target_begin) { return 0; }
+
+void Test() {
+    std::cout << "Test aligner" << std::endl;
+}
+
 }

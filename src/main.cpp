@@ -9,12 +9,13 @@
 #include <string>
 #include <algorithm>
 
-#include "alignment.hpp"
-
 #include "bioparser/fasta_parser.hpp"
 #include "bioparser/fastq_parser.hpp"
 
-#define VERSION "0.2.0"
+#include "ivory_config.hpp"
+#include "aligner.hpp"
+
+// #define VERSION "0.2.0"
 
 
 struct Sequence {
@@ -170,6 +171,7 @@ void ProcessArgs(int argc, char** argv,
 
 int main(int argc, char **argv) {
     std::vector<std::unique_ptr<Sequence>> reference, fragments;
+    ivory_aligner::Test();
     ProcessArgs(argc, argv, &reference, &fragments);
     PrintStatistics(reference, 1);
     PrintStatistics(fragments, 2);

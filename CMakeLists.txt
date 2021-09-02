@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(ivory_mapper VERSION 0.1.0
+project(ivory_mapper VERSION 0.2.0
                      LANGUAGES CXX
                      DESCRIPTION "A simple ivory_mapper for long genomic reads")
 
@@ -13,6 +13,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 include(FetchContent)
 
+# Find bioparser
 find_package(bioparser 3.0.13 QUIET)
 if (NOT bioparser_FOUND)
     FetchContent_Declare(
@@ -28,6 +29,7 @@ if (NOT bioparser_FOUND)
     endif()
 endif()
 
+# Find googletest
 find_package(GTest 1.10.0 QUIET)
 if (NOT GTest_FOUND)
     FetchContent_Declare(
@@ -39,16 +41,31 @@ if (NOT GTest_FOUND)
     add_library(GTest::Main ALIAS gtest_main)
 endif()
 
-# add_library(ivory_alignment_engine
-#     include/alignment.cpp
-# )
+# Add the library - how does this work?
+add_subdirectory(include)
 
+# This is just like g++ ... -o ivory_mapper
 add_executable(ivory_mapper src/main.cpp)
 
+# What's the best practice regarding this? 
+# Where should I store congif.hpp and config.hpp.in
+configure_file(include/ivory_config.hpp.in ivory_config.hpp)
+
+# Include libraries - how does this work?
+# I still have to put include in the line below to reach aligner.hpp
 target_link_libraries(ivory_mapper
     bioparser::bioparser
+    ivory_alignment_engine
 )
 
+# This specifies which directories to look into when searching for include headers
+# What does PUBLIC do?
+target_include_directories(ivory_mapper PUBLIC
+    "${PROJECT_BINARY_DIR}"
+    "include"
+)
+
+# Testing
 enable_testing()
 
 add_executable(ivory_mapper_test test/ivory_mapper_test.cpp)
