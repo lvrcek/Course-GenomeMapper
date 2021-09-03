@@ -171,20 +171,45 @@ void ProcessArgs(int argc, char** argv,
 
 void TestAligner() {
     int score;
-    const char* query = "TCCG";
-    unsigned int query_len = std::string(query).size();
-    const char* target = "ACTCCGAT";
-    unsigned int target_len = std::string(target).size();
+    const char *query, *target;
+    unsigned int query_len, target_len;
+
+    query = "GATTACA";
+    query_len = std::string(query).size();
+    target = "GCATGCU";
+    target_len = std::string(target).size();
     score = ivory_aligner::Align(query, query_len, target, target_len, ivory_aligner::global, 1, -1, -1);
     std::cout << "Alignment score: " << score << std::endl;
+
+    query = "ACCTAAGG";
+    query_len = std::string(query).size();
+    target = "GGCTCAATCA";
+    target_len = std::string(target).size();
     score = ivory_aligner::Align(query, query_len, target, target_len, ivory_aligner::local, 2, -1, -2);
     std::cout << "Alignment score: " << score << std::endl;
+
+    query = "CGATAAA";
+    query_len = std::string(query).size();
+    target = "ACTCCGAT";
+    target_len = std::string(target).size();
     score = ivory_aligner::Align(query, query_len, target, target_len, ivory_aligner::semiglobal, 1, -1, -1);
     std::cout << "Alignment score: " << score << std::endl;
 }
 
+void TestMax() {
+    int a = 5, b = 5, c = 5;
+    std::vector<std::pair<int, ivory_aligner::Direction>> v;
+    v.push_back(std::make_pair(a, ivory_aligner::up));
+    v.push_back(std::make_pair(b, ivory_aligner::left));
+    v.push_back(std::make_pair(c, ivory_aligner::diag));
+    auto el = std::max_element(v.begin(), v.end());
+    std::cout << el->first << " " << el->second << std::endl;
+}
+
 int main(int argc, char **argv) {
     std::vector<std::unique_ptr<Sequence>> reference, fragments;
+    // TestMax();
+    // return 0;
     TestAligner();
     return 0;
     ProcessArgs(argc, argv, &reference, &fragments);
