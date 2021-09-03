@@ -182,9 +182,9 @@ void TestAligner() {
     target_len = std::string(target).size();
     std::cout << "Query sequence: " << query << std::endl << "Target sequence: " << target << std::endl;
     score = ivory_aligner::Align(query, query_len, target, target_len, ivory_aligner::global, 1, -1, -1, &cigar, &target_begin);
+    std::cout << "Alignment score: " << score << std::endl;
     std::cout << "CIGAR string: " << cigar << std::endl;
-    std::cout << "Target begin: " << target_begin << std::endl;
-    std::cout << "Alignment score: " << score << std::endl << std::endl;
+    std::cout << "Target begin: " << target_begin << std::endl  << std::endl;
 
     query = "ACCTAAGG";
     query_len = std::string(query).size();
@@ -192,9 +192,9 @@ void TestAligner() {
     target_len = std::string(target).size();
     std::cout << "Query sequence: " << query << std::endl << "Target sequence: " << target << std::endl;
     score = ivory_aligner::Align(query, query_len, target, target_len, ivory_aligner::local, 2, -1, -2, &cigar, &target_begin);
+    std::cout << "Alignment score: " << score << std::endl;
     std::cout << "CIGAR string: " << cigar << std::endl;
-    std::cout << "Target begin: " << target_begin << std::endl;
-    std::cout << "Alignment score: " << score << std::endl << std::endl;
+    std::cout << "Target begin: " << target_begin << std::endl  << std::endl;
 
     query = "CGATAAA";
     query_len = std::string(query).size();
@@ -202,9 +202,9 @@ void TestAligner() {
     target_len = std::string(target).size();
     std::cout << "Query sequence: " << query << std::endl << "Target sequence: " << target << std::endl;
     score = ivory_aligner::Align(query, query_len, target, target_len, ivory_aligner::semiglobal, 1, -1, -1, &cigar, &target_begin);
+    std::cout << "Alignment score: " << score << std::endl;
     std::cout << "CIGAR string: " << cigar << std::endl;
-    std::cout << "Target begin: " << target_begin << std::endl;
-    std::cout << "Alignment score: " << score << std::endl << std::endl;
+    std::cout << "Target begin: " << target_begin << std::endl  << std::endl;
 }
 
 void TestMax() {

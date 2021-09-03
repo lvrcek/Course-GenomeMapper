@@ -53,8 +53,13 @@ int GlobalAlignment(const char* query, unsigned int query_len,
     PrintTraceback(traceback, query, query_len, target, target_len);
 
     int score = matrix[query_len][target_len];
-    if (cigar != nullptr)  // TODO: enable target_begin without cigar
-        *cigar = GetCigar(traceback, query_len, target_len, target_begin);
+    int end_query = query_len;
+    int end_target = target_len;
+
+    if (cigar != nullptr)
+        *cigar = GetCigar(traceback, end_query, end_target);
+    if (target_begin != nullptr)
+        *target_begin = GetTargetBegin(traceback, end_query, end_target);
 
     return score;
 }
@@ -113,8 +118,10 @@ int LocalAlignment(const char* query, unsigned int query_len,
     PrintMatrix(matrix, query, query_len, target, target_len);
     PrintTraceback(traceback, query, query_len, target, target_len);
 
-    if (cigar != nullptr)  // TODO: enable target_begin without cigar
-        *cigar = GetCigar(traceback, end_query, end_target, target_begin);
+    if (cigar != nullptr)
+        *cigar = GetCigar(traceback, end_query, end_target);
+    if (target_begin != nullptr)
+        *target_begin = GetTargetBegin(traceback, end_query, end_target);
 
     return score;
 }
@@ -173,8 +180,10 @@ int SemiGlobalAlignment(const char* query, unsigned int query_len,
     PrintMatrix(matrix, query, query_len, target, target_len);
     PrintTraceback(traceback, query, query_len, target, target_len);
 
-    if (cigar != nullptr)  // TODO: enable target_begin without cigar
-        *cigar = GetCigar(traceback, end_query, end_target, target_begin);
+    if (cigar != nullptr)
+        *cigar = GetCigar(traceback, end_query, end_target);
+    if (target_begin != nullptr)
+        *target_begin = GetTargetBegin(traceback, end_query, end_target);
 
     return score;
 }
@@ -223,7 +232,7 @@ void PrintTraceback(Direction** traceback, const char * query, unsigned int quer
     printf("\n");
 }
 
-std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int end_target, unsigned int* target_begin) {
+std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int end_target) {
     std::string cigar = "";
     int i = end_query;
     int j = end_target;
@@ -244,9 +253,6 @@ std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int
         else
             break;
     }
-    if (target_begin != nullptr)
-        *target_begin = j;
-
     int count = 1;
     std::reverse(cigar.begin(), cigar.end());
     std::string new_cigar = "";
@@ -263,6 +269,26 @@ std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int
     new_cigar += std::to_string(count) + cigar[cigar.size()-1];
 
     return new_cigar;
+}
+
+unsigned int GetTargetBegin(Direction** traceback, unsigned int end_query, unsigned int end_target) {
+    int i = end_query;
+    int j = end_target;
+    while (true) {
+        if (traceback[i][j] == diag) {
+            i--;
+            j--;
+        }
+        else if (traceback[i][j] == left) {
+            j--;
+        }
+        else if (traceback[i][j] == up) {
+            i--;
+        }
+        else
+            break;
+    }
+    return j;
 }
 
 int Align(
