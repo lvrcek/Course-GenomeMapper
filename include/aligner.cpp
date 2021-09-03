@@ -51,7 +51,11 @@ int GlobalAlignment(const char* query, unsigned int query_len,
     printf("\n");
     PrintMatrix(matrix, query, query_len, target, target_len);
     PrintTraceback(traceback, query, query_len, target, target_len);
-    return matrix[query_len][target_len];
+
+    int score = matrix[query_len][target_len];
+    std::string cigar = GetCigar(traceback, query_len, target_len);
+    std::cout << cigar << std::endl;
+    return score;
 }
 
 int LocalAlignment(const char* query, unsigned int query_len,
@@ -79,7 +83,7 @@ int LocalAlignment(const char* query, unsigned int query_len,
     }
 
     int score = 0;
-    int end_query = 0, end_target = 0;
+    unsigned int end_query = 0, end_target = 0;
 
     for (int i = 1; i < query_len + 1; i++) {
         for (int j = 1; j < target_len + 1; j++) {
@@ -107,6 +111,9 @@ int LocalAlignment(const char* query, unsigned int query_len,
     printf("\n");
     PrintMatrix(matrix, query, query_len, target, target_len);
     PrintTraceback(traceback, query, query_len, target, target_len);
+
+    std::string cigar = GetCigar(traceback, end_query, end_target);
+    std::cout << cigar << std::endl;
     return score;
 }
 
@@ -136,7 +143,7 @@ int SemiGlobalAlignment(const char* query, unsigned int query_len,
     }
 
     int score = 0;
-    int end_query = 0, end_target = 0;
+    unsigned int end_query = 0, end_target = 0;
 
     for (int i = 1; i < query_len + 1; i++) {
         for (int j = 1; j < target_len + 1; j++) {
@@ -163,6 +170,9 @@ int SemiGlobalAlignment(const char* query, unsigned int query_len,
     printf("\n");
     PrintMatrix(matrix, query, query_len, target, target_len);
     PrintTraceback(traceback, query, query_len, target, target_len);
+
+    std::string cigar = GetCigar(traceback, end_query, end_target);
+    std::cout << cigar << std::endl;
     return score;
 }
 
@@ -210,6 +220,46 @@ void PrintTraceback(Direction** traceback, const char * query, unsigned int quer
     printf("\n");
 }
 
+std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int end_target) {
+    std::string cigar = "";
+    int i = end_query;
+    int j = end_target;
+    while (true) {
+        if (traceback[i][j] == diag) {
+            cigar += 'M';
+            i--;
+            j--;
+        }
+        else if (traceback[i][j] == left) {
+            cigar += 'I';
+            j--;
+        }
+        else if (traceback[i][j] == up) {
+            cigar += 'D';
+            i--;
+        }
+        else
+            break;
+    }
+    std::cout << cigar << std::endl;
+    std::reverse(cigar.begin(), cigar.end());
+    std::cout << cigar << std::endl;
+
+    int count = 1;
+    std::string new_cigar = "";
+    for (int i = 1; i < cigar.size(); i++) {
+        if (cigar[i] == cigar[i-1]) {
+            count++;
+        }
+        else {
+            new_cigar += std::to_string(count) + cigar[i-1];
+            count = 1;
+        }
+    }
+    new_cigar += std::to_string(count) + cigar[cigar.size()-1];
+
+    return new_cigar;
+}
 
 int Align(
         const char* query, unsigned int query_len,

@@ -23,6 +23,8 @@ void PrintMatrix(int** matrix, const char* query, unsigned int query_len, const 
 
 void PrintTraceback(Direction** traceback, const char* query, unsigned int query_len, const char* target, unsigned int target_len);
 
+std::string GetCigar(Direction** traceback, unsigned int query_end, unsigned int target_end);
+
 int Align(
     const char* query, unsigned int query_len,
     const char* target, unsigned int target_len,
