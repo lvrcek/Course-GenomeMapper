@@ -10,7 +10,7 @@ namespace ivory_aligner {
 
 int GlobalAlignment(const char* query, unsigned int query_len,
                      const char* target, unsigned int target_len,
-                     int match, int mismatch, int gap) {
+                     int match, int mismatch, int gap, std::string* cigar) {
 
     int** matrix = new int*[query_len + 1];
     Direction** traceback = new Direction*[query_len + 1];
@@ -53,14 +53,15 @@ int GlobalAlignment(const char* query, unsigned int query_len,
     PrintTraceback(traceback, query, query_len, target, target_len);
 
     int score = matrix[query_len][target_len];
-    std::string cigar = GetCigar(traceback, query_len, target_len);
-    std::cout << cigar << std::endl;
+    if (cigar != nullptr)
+        *cigar = GetCigar(traceback, query_len, target_len);
+
     return score;
 }
 
 int LocalAlignment(const char* query, unsigned int query_len,
                      const char* target, unsigned int target_len,
-                     int match, int mismatch, int gap) {
+                     int match, int mismatch, int gap, std::string* cigar) {
     int** matrix = new int*[query_len + 1];
     Direction** traceback = new Direction*[query_len + 1];
 
@@ -112,15 +113,16 @@ int LocalAlignment(const char* query, unsigned int query_len,
     PrintMatrix(matrix, query, query_len, target, target_len);
     PrintTraceback(traceback, query, query_len, target, target_len);
 
-    std::string cigar = GetCigar(traceback, end_query, end_target);
-    std::cout << cigar << std::endl;
+    if (cigar != nullptr)
+        *cigar = GetCigar(traceback, end_query, end_target);
+
     return score;
 }
 
 
 int SemiGlobalAlignment(const char* query, unsigned int query_len,
                      const char* target, unsigned int target_len,
-                     int match, int mismatch, int gap) {
+                     int match, int mismatch, int gap, std::string* cigar) {
     int** matrix = new int*[query_len + 1];
     Direction** traceback = new Direction*[query_len + 1];
 
@@ -171,8 +173,9 @@ int SemiGlobalAlignment(const char* query, unsigned int query_len,
     PrintMatrix(matrix, query, query_len, target, target_len);
     PrintTraceback(traceback, query, query_len, target, target_len);
 
-    std::string cigar = GetCigar(traceback, end_query, end_target);
-    std::cout << cigar << std::endl;
+    if (cigar != nullptr)
+        *cigar = GetCigar(traceback, end_query, end_target);
+
     return score;
 }
 
@@ -241,12 +244,11 @@ std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int
         else
             break;
     }
-    std::cout << cigar << std::endl;
-    std::reverse(cigar.begin(), cigar.end());
-    std::cout << cigar << std::endl;
 
     int count = 1;
+    std::reverse(cigar.begin(), cigar.end());
     std::string new_cigar = "";
+
     for (int i = 1; i < cigar.size(); i++) {
         if (cigar[i] == cigar[i-1]) {
             count++;
@@ -275,13 +277,13 @@ int Align(
 
     switch(type) {
         case global:
-            alignment_score = GlobalAlignment(query, query_len, target, target_len, match, mismatch, gap);
+            alignment_score = GlobalAlignment(query, query_len, target, target_len, match, mismatch, gap, cigar);
             break;
         case local:
-            alignment_score = LocalAlignment(query, query_len, target, target_len, match, mismatch, gap);
+            alignment_score = LocalAlignment(query, query_len, target, target_len, match, mismatch, gap, cigar);
             break;
         case semiglobal:
-            alignment_score = SemiGlobalAlignment(query, query_len, target, target_len, match, mismatch, gap);
+            alignment_score = SemiGlobalAlignment(query, query_len, target, target_len, match, mismatch, gap, cigar);
             break;
     }
 
