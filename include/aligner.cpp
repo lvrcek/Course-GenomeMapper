@@ -1,8 +1,11 @@
+// Copyright (c) 2021 Lovro Vrcek
+
 #include <cstdio>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <utility>
 
 #include "aligner.hpp"
 
@@ -10,8 +13,8 @@ namespace ivory_aligner {
 
 int GlobalAlignment(const char* query, unsigned int query_len,
                      const char* target, unsigned int target_len,
-                     int match, int mismatch, int gap, std::string* cigar, unsigned int* target_begin) {
-
+                     int match, int mismatch, int gap,
+                     std::string* cigar, unsigned int* target_begin) {
     int** matrix = new int*[query_len + 1];
     Direction** traceback = new Direction*[query_len + 1];
     for (int i = 0; i < query_len + 1; i++) {
@@ -26,7 +29,7 @@ int GlobalAlignment(const char* query, unsigned int query_len,
         matrix[0][j] = gap * j;
         traceback[0][j] = left;
     }
-    
+
     for (int i = 1; i < query_len  + 1; i++) {
         matrix[i][0] = gap * i;
         traceback[i][0] = up;
@@ -34,10 +37,10 @@ int GlobalAlignment(const char* query, unsigned int query_len,
 
     for (int i = 1; i < query_len + 1; i++) {
         for (int j = 1; j < target_len + 1; j++) {
-            int subs = matrix[i-1][j-1] + ((query[i-1] == target[j-1]) ? match : mismatch);
+            int subs = matrix[i-1][j-1] + ((query[i-1] == target[j-1]) ? match : mismatch);  // NOLINT
             int ins = matrix[i][j-1] + gap;
             int del = matrix[i-1][j] + gap;
-            
+
             std::vector<std::pair<int, Direction>> v;
             v.push_back(std::make_pair(subs, diag));
             v.push_back(std::make_pair(ins, left));
@@ -66,7 +69,8 @@ int GlobalAlignment(const char* query, unsigned int query_len,
 
 int LocalAlignment(const char* query, unsigned int query_len,
                      const char* target, unsigned int target_len,
-                     int match, int mismatch, int gap, std::string* cigar, unsigned int* target_begin) {
+                     int match, int mismatch, int gap,
+                     std::string* cigar, unsigned int* target_begin) {
     int** matrix = new int*[query_len + 1];
     Direction** traceback = new Direction*[query_len + 1];
 
@@ -82,7 +86,7 @@ int LocalAlignment(const char* query, unsigned int query_len,
         matrix[0][j] = 0;
         traceback[0][j] = stop;
     }
-    
+
     for (int i = 1; i < query_len  + 1; i++) {
         matrix[i][0] = 0;
         traceback[i][0] = stop;
@@ -93,7 +97,7 @@ int LocalAlignment(const char* query, unsigned int query_len,
 
     for (int i = 1; i < query_len + 1; i++) {
         for (int j = 1; j < target_len + 1; j++) {
-            int subs = matrix[i-1][j-1] + ((query[i-1] == target[j-1]) ? match : mismatch);
+            int subs = matrix[i-1][j-1] + ((query[i-1] == target[j-1]) ? match : mismatch);  // NOLINT
             int ins = matrix[i][j-1] + gap;
             int del = matrix[i-1][j] + gap;
 
@@ -129,7 +133,8 @@ int LocalAlignment(const char* query, unsigned int query_len,
 
 int SemiGlobalAlignment(const char* query, unsigned int query_len,
                      const char* target, unsigned int target_len,
-                     int match, int mismatch, int gap, std::string* cigar, unsigned int* target_begin) {
+                     int match, int mismatch, int gap,
+                     std::string* cigar, unsigned int* target_begin) {
     int** matrix = new int*[query_len + 1];
     Direction** traceback = new Direction*[query_len + 1];
 
@@ -145,7 +150,7 @@ int SemiGlobalAlignment(const char* query, unsigned int query_len,
         matrix[0][j] = 0;
         traceback[0][j] = stop;
     }
-    
+
     for (int i = 1; i < query_len  + 1; i++) {
         matrix[i][0] = 0;
         traceback[i][0] = stop;
@@ -156,7 +161,7 @@ int SemiGlobalAlignment(const char* query, unsigned int query_len,
 
     for (int i = 1; i < query_len + 1; i++) {
         for (int j = 1; j < target_len + 1; j++) {
-            int subs = matrix[i-1][j-1] + ((query[i-1] == target[j-1]) ? match : mismatch);
+            int subs = matrix[i-1][j-1] + ((query[i-1] == target[j-1]) ? match : mismatch);  // NOLINT
             int ins = matrix[i][j-1] + gap;
             int del = matrix[i-1][j] + gap;
 
@@ -169,7 +174,7 @@ int SemiGlobalAlignment(const char* query, unsigned int query_len,
             matrix[i][j] = step->first;
             traceback[i][j] = step->second;
 
-            if ( (i == query_len || j == target_len) &&  matrix[i][j] > score) {
+            if ((i == query_len || j == target_len) &&  matrix[i][j] > score) {
                 score = matrix[i][j];
                 end_query = i;
                 end_target = j;
@@ -205,8 +210,9 @@ void PrintMatrix(int** matrix, const char * query, unsigned int query_len,
     printf("\n");
 }
 
-void PrintTraceback(Direction** traceback, const char * query, unsigned int query_len,
-                 const char* target, unsigned int target_len) {
+void PrintTraceback(Direction** traceback,
+                const char * query, unsigned int query_len,
+                const char* target, unsigned int target_len) {
     std::cout << "Traceback matrix:" <<std::endl;
     printf("%4c%4c", ' ', ' ');
     for (int j = 0; j < target_len; j++)
@@ -215,15 +221,15 @@ void PrintTraceback(Direction** traceback, const char * query, unsigned int quer
     printf("%4c", ' ');
     for (int i = 0; i < query_len + 1; i++) {
         for (int j = 0; j < target_len + 1; j++) {
-            switch(traceback[i][j]) {
-                case -1:
-                    printf("%4c", 'S'); break;
+            switch (traceback[i][j]) {
                 case 0:
                     printf("%4c", 'U'); break;
                 case 1:
                     printf("%4c", 'L'); break;
                 case 2:
                     printf("%4c", 'D'); break;
+                case 3:
+                    printf("%4c", 'S'); break;
             }
         }
         printf("\n");
@@ -232,7 +238,8 @@ void PrintTraceback(Direction** traceback, const char * query, unsigned int quer
     printf("\n");
 }
 
-std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int end_target) {
+std::string GetCigar(Direction** traceback,
+                     unsigned int end_query, unsigned int end_target) {
     std::string cigar = "";
     int i = end_query;
     int j = end_target;
@@ -241,17 +248,15 @@ std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int
             cigar += 'M';
             i--;
             j--;
-        }
-        else if (traceback[i][j] == left) {
+        } else if (traceback[i][j] == left) {
             cigar += 'I';
             j--;
-        }
-        else if (traceback[i][j] == up) {
+        } else if (traceback[i][j] == up) {
             cigar += 'D';
             i--;
-        }
-        else
+        } else {
             break;
+        }
     }
     int count = 1;
     std::reverse(cigar.begin(), cigar.end());
@@ -260,8 +265,7 @@ std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int
     for (int i = 1; i < cigar.size(); i++) {
         if (cigar[i] == cigar[i-1]) {
             count++;
-        }
-        else {
+        } else {
             new_cigar += std::to_string(count) + cigar[i-1];
             count = 1;
         }
@@ -271,22 +275,21 @@ std::string GetCigar(Direction** traceback, unsigned int end_query, unsigned int
     return new_cigar;
 }
 
-unsigned int GetTargetBegin(Direction** traceback, unsigned int end_query, unsigned int end_target) {
+unsigned int GetTargetBegin(Direction** traceback,
+                            unsigned int end_query, unsigned int end_target) {
     int i = end_query;
     int j = end_target;
     while (true) {
         if (traceback[i][j] == diag) {
             i--;
             j--;
-        }
-        else if (traceback[i][j] == left) {
+        } else if (traceback[i][j] == left) {
             j--;
-        }
-        else if (traceback[i][j] == up) {
+        } else if (traceback[i][j] == up) {
             i--;
-        }
-        else
+        } else {
             break;
+        }
     }
     return j;
 }
@@ -300,22 +303,24 @@ int Align(
         int gap,
         std::string* cigar,
         unsigned int* target_begin) {
-    
     int alignment_score;
 
-    switch(type) {
+    switch (type) {
         case global:
-            alignment_score = GlobalAlignment(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+            alignment_score = GlobalAlignment(query, query_len, target, target_len,  // NOLINT
+                                    match, mismatch, gap, cigar, target_begin);
             break;
         case local:
-            alignment_score = LocalAlignment(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+            alignment_score = LocalAlignment(query, query_len, target, target_len,  // NOLINT
+                                    match, mismatch, gap, cigar, target_begin);
             break;
         case semiglobal:
-            alignment_score = SemiGlobalAlignment(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+            alignment_score = SemiGlobalAlignment(query, query_len, target, target_len, // NOLINT
+                                    match, mismatch, gap, cigar, target_begin);
             break;
     }
 
     return alignment_score;
 }
 
-}
+}  // namespace ivory_aligner
