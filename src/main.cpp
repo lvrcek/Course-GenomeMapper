@@ -169,51 +169,35 @@ void ProcessArgs(int argc, char** argv,
     }
 }
 
-void TestAligner() {
-    int score;
-    const char *query, *target;
-    unsigned int query_len, target_len;
+void VerboseTest(
+        const char* query, unsigned int query_len,
+        const char* target, unsigned int target_len,
+        ivory_aligner::AlignmentType type,
+        int match,
+        int mismatch,
+        int gap) {
     std::string cigar;
     unsigned int target_begin;
 
-    query = "GATTACA";
-    query_len = std::string(query).size();
-    target = "GCATGCU";
-    target_len = std::string(target).size();
     std::cout << "Query sequence: " << query << std::endl
               << "Target sequence: " << target << std::endl;
-    score = ivory_aligner::Align(query, query_len, target, target_len,
-                                 ivory_aligner::global, 1, -1, -1,
-                                 &cigar, &target_begin);
+    int score = ivory_aligner::Align(
+            query, query_len,
+            target, target_len,
+            type, match, mismatch, gap,
+            &cigar, &target_begin);
     std::cout << "Alignment score: " << score << std::endl;
     std::cout << "CIGAR string: " << cigar << std::endl;
     std::cout << "Target begin: " << target_begin << std::endl  << std::endl;
+}
 
-    query = "ACCTAAGG";
-    query_len = std::string(query).size();
-    target = "GGCTCAATCA";
-    target_len = std::string(target).size();
-    std::cout << "Query sequence: " << query << std::endl
-              << "Target sequence: " << target << std::endl;
-    score = ivory_aligner::Align(query, query_len, target, target_len,
-                                 ivory_aligner::local, 2, -1, -2,
-                                 &cigar, &target_begin);
-    std::cout << "Alignment score: " << score << std::endl;
-    std::cout << "CIGAR string: " << cigar << std::endl;
-    std::cout << "Target begin: " << target_begin << std::endl  << std::endl;
-
-    query = "CGATAAA";
-    query_len = std::string(query).size();
-    target = "ACTCCGAT";
-    target_len = std::string(target).size();
-    std::cout << "Query sequence: " << query << std::endl
-              << "Target sequence: " << target << std::endl;
-    score = ivory_aligner::Align(query, query_len, target, target_len,
-                                 ivory_aligner::semiglobal, 1, -1, -1,
-                                 &cigar, &target_begin);
-    std::cout << "Alignment score: " << score << std::endl;
-    std::cout << "CIGAR string: " << cigar << std::endl;
-    std::cout << "Target begin: " << target_begin << std::endl  << std::endl;
+void TestAligner() {
+    std::string cigar;
+    unsigned int target_begin;
+    
+    VerboseTest("GATTACA", 7, "GCATGCU", 7, ivory_aligner::global, 1, -1, -1);
+    VerboseTest("ACCTAAGG", 8, "GGCTCAATCA", 10, ivory_aligner::local, 2, -1, -2);
+    VerboseTest("CGATAAA", 7, "ACTCCGAT", 8, ivory_aligner::semiglobal, 1, -1, -1);
 }
 
 int main(int argc, char **argv) {
