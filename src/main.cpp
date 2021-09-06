@@ -197,9 +197,12 @@ void TestAligner() {
     std::string cigar;
     unsigned int target_begin;
 
-    VerboseTest("GATTACA", 7, "GCATGCU", 7, ivory_aligner::global, 1, -1, -1, true);
-    VerboseTest("ACCTAAGG", 8, "GGCTCAATCA", 10, ivory_aligner::local, 2, -1, -2, true);
-    VerboseTest("CGATAAA", 7, "ACTCCGAT", 8, ivory_aligner::semiglobal, 1, -1, -1, true);
+    VerboseTest("GATTACA", 7, "GCATGCU", 7, ivory_aligner::global,
+                1, -1, -1, true);
+    VerboseTest("ACCTAAGG", 8, "GGCTCAATCA", 10, ivory_aligner::local,
+                2, -1, -2, true);
+    VerboseTest("CGATAAA", 7, "ACTCCGAT", 8, ivory_aligner::semiglobal,
+                1, -1, -1, true);
 }
 
 int main(int argc, char **argv) {
