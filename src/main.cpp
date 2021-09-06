@@ -15,8 +15,6 @@
 #include "ivory_config.hpp"
 #include "aligner.hpp"
 
-// #define VERSION "0.2.0"
-
 
 struct Sequence {
  public:
@@ -37,7 +35,8 @@ struct Sequence {
                   quality(quality, quality_len) {}
 };
 
-void PrintStatistics(const std::vector<std::unique_ptr<Sequence>>& sequences, int mode) {  // NOLINT
+void PrintStatistics(const std::vector<std::unique_ptr<Sequence>>& sequences,
+                     int mode) {
     int num_sequences = sequences.size();
     int total_len = 0, n50_sum = 0;
     int min_len, max_len, mean_len, n50;
@@ -101,7 +100,8 @@ void ProcessArgs(int argc, char** argv,
     };
 
     while (true) {
-        const auto opt = getopt_long(argc, argv, short_opts, long_opts, nullptr);  // NOLINT
+        const auto opt = getopt_long(argc, argv, short_opts, long_opts,
+                                     nullptr);
         if (opt == -1)
             break;
         switch (opt) {
