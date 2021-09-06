@@ -19,7 +19,8 @@ int GlobalAlignment(
         int mismatch,
         int gap,
         std::string* cigar,
-        unsigned int* target_begin);
+        unsigned int* target_begin,
+        bool matrix_print);
 
 int LocalAlignment(
         const char* query, unsigned int query_len,
@@ -28,7 +29,8 @@ int LocalAlignment(
         int mismatch,
         int gap,
         std::string* cigar,
-        unsigned int* target_begin);
+        unsigned int* target_begin,
+        bool matrix_print);
 
 int SemiGlobalAlignment(
         const char* query, unsigned int query_len,
@@ -37,7 +39,8 @@ int SemiGlobalAlignment(
         int mismatch,
         int gap,
         std::string* cigar,
-        unsigned int* target_begin);
+        unsigned int* target_begin,
+        bool matrix_print);
 
 void PrintMatrix(
         int** matrix,
@@ -63,7 +66,8 @@ int Align(
         int mismatch,
         int gap,
         std::string* cigar = nullptr,
-        unsigned int* target_begin = nullptr);
+        unsigned int* target_begin = nullptr,
+        bool matrix_print = false);
 
 }  // namespace ivory_aligner
 

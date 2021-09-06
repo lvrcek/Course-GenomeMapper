@@ -21,7 +21,8 @@ int GlobalAlignment(
         int mismatch,
         int gap,
         std::string* cigar,
-        unsigned int* target_begin) {
+        unsigned int* target_begin,
+        bool matrix_print) {
     int** matrix = new int*[query_len + 1];
     Direction** traceback = new Direction*[query_len + 1];
     for (int i = 0; i < query_len + 1; i++) {
@@ -59,9 +60,11 @@ int GlobalAlignment(
             traceback[i][j] = step->second;
         }
     }
-    printf("\n");
-    PrintMatrix(matrix, query, query_len, target, target_len);
-    PrintTraceback(traceback, query, query_len, target, target_len);
+    if (matrix_print) {
+        printf("\n");
+        PrintMatrix(matrix, query, query_len, target, target_len);
+        PrintTraceback(traceback, query, query_len, target, target_len);
+    }
 
     int score = matrix[query_len][target_len];
     int end_query = query_len;
@@ -82,7 +85,8 @@ int LocalAlignment(
         int mismatch,
         int gap,
         std::string* cigar,
-        unsigned int* target_begin) {
+        unsigned int* target_begin,
+        bool matrix_print) {
     int** matrix = new int*[query_len + 1];
     Direction** traceback = new Direction*[query_len + 1];
 
@@ -131,9 +135,11 @@ int LocalAlignment(
             }
         }
     }
-    printf("\n");
-    PrintMatrix(matrix, query, query_len, target, target_len);
-    PrintTraceback(traceback, query, query_len, target, target_len);
+    if (matrix_print) {
+        printf("\n");
+        PrintMatrix(matrix, query, query_len, target, target_len);
+        PrintTraceback(traceback, query, query_len, target, target_len);
+    }
 
     if (cigar != nullptr)
         *cigar = GetCigar(traceback, end_query, end_target);
@@ -151,7 +157,8 @@ int SemiGlobalAlignment(
         int mismatch,
         int gap,
         std::string* cigar,
-        unsigned int* target_begin) {
+        unsigned int* target_begin,
+        bool matrix_print) {
     int** matrix = new int*[query_len + 1];
     Direction** traceback = new Direction*[query_len + 1];
 
@@ -199,9 +206,11 @@ int SemiGlobalAlignment(
             }
         }
     }
-    printf("\n");
-    PrintMatrix(matrix, query, query_len, target, target_len);
-    PrintTraceback(traceback, query, query_len, target, target_len);
+    if (matrix_print) {
+        printf("\n");
+        PrintMatrix(matrix, query, query_len, target, target_len);
+        PrintTraceback(traceback, query, query_len, target, target_len);
+    }
 
     if (cigar != nullptr)
         *cigar = GetCigar(traceback, end_query, end_target);
@@ -323,7 +332,8 @@ int Align(
         int mismatch,
         int gap,
         std::string* cigar,
-        unsigned int* target_begin) {
+        unsigned int* target_begin,
+        bool matrix_print) {
     int alignment_score;
     switch (type) {
         case global:
@@ -331,21 +341,24 @@ int Align(
                     query, query_len,
                     target, target_len,
                     match, mismatch, gap,
-                    cigar, target_begin);
+                    cigar, target_begin,
+                    matrix_print);
             break;
         case local:
             alignment_score = LocalAlignment(
                     query, query_len,
                     target, target_len,
                     match, mismatch, gap,
-                    cigar, target_begin);
+                    cigar, target_begin,
+                    matrix_print);
             break;
         case semiglobal:
             alignment_score = SemiGlobalAlignment(
                     query, query_len,
                     target, target_len,
                     match, mismatch, gap,
-                    cigar, target_begin);
+                    cigar, target_begin,
+                    matrix_print);
             break;
     }
     return alignment_score;
