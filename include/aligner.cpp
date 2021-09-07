@@ -12,7 +12,7 @@
 
 
 
-namespace ivory_aligner {
+namespace ivory {
 
 int GlobalAlignment(
         const char* query, unsigned int query_len,
@@ -20,6 +20,8 @@ int GlobalAlignment(
         int match,
         int mismatch,
         int gap,
+        int gap_open,
+        int gap_extend,
         std::string* cigar,
         unsigned int* target_begin,
         bool matrix_print) {
@@ -47,8 +49,16 @@ int GlobalAlignment(
         for (int j = 1; j < target_len + 1; j++) {
             int subs = matrix[i-1][j-1] +
                     ((query[i-1] == target[j-1]) ? match : mismatch);
-            int ins = matrix[i][j-1] + gap;
-            int del = matrix[i-1][j] + gap;
+            int ins, del;
+            if (gap_open != 0 && gap_extend != 0) {
+                ins = matrix[i][j-1] +
+                        ((traceback[i][j-1] == left) ? gap_extend : gap_open);
+                del = matrix[i-1][j] +
+                        ((traceback[i-1][j] == up) ? gap_extend : gap_open);
+            } else {
+                ins = matrix[i][j-1] + gap;
+                del = matrix[i-1][j] + gap;
+            }
 
             std::vector<std::pair<int, Direction>> v;
             v.push_back(std::make_pair(subs, diag));
@@ -84,6 +94,8 @@ int LocalAlignment(
         int match,
         int mismatch,
         int gap,
+        int gap_open,
+        int gap_extend,
         std::string* cigar,
         unsigned int* target_begin,
         bool matrix_print) {
@@ -115,8 +127,16 @@ int LocalAlignment(
         for (int j = 1; j < target_len + 1; j++) {
             int subs = matrix[i-1][j-1] +
                     ((query[i-1] == target[j-1]) ? match : mismatch);
-            int ins = matrix[i][j-1] + gap;
-            int del = matrix[i-1][j] + gap;
+            int ins, del;
+            if (gap_open != 0 && gap_extend != 0) {
+                ins = matrix[i][j-1] +
+                        ((traceback[i][j-1] == left) ? gap_extend : gap_open);
+                del = matrix[i-1][j] +
+                        ((traceback[i-1][j] == up) ? gap_extend : gap_open);
+            } else {
+                ins = matrix[i][j-1] + gap;
+                del = matrix[i-1][j] + gap;
+            }
 
             std::vector<std::pair<int, Direction>> v;
             v.push_back(std::make_pair(subs, diag));
@@ -156,6 +176,8 @@ int SemiGlobalAlignment(
         int match,
         int mismatch,
         int gap,
+        int gap_open,
+        int gap_extend,
         std::string* cigar,
         unsigned int* target_begin,
         bool matrix_print) {
@@ -187,8 +209,16 @@ int SemiGlobalAlignment(
         for (int j = 1; j < target_len + 1; j++) {
             int subs = matrix[i-1][j-1] +
                     ((query[i-1] == target[j-1]) ? match : mismatch);
-            int ins = matrix[i][j-1] + gap;
-            int del = matrix[i-1][j] + gap;
+            int ins, del;
+            if (gap_open != 0 && gap_extend != 0) {
+                ins = matrix[i][j-1] +
+                        ((traceback[i][j-1] == left) ? gap_extend : gap_open);
+                del = matrix[i-1][j] +
+                        ((traceback[i-1][j] == up) ? gap_extend : gap_open);
+            } else {
+                ins = matrix[i][j-1] + gap;
+                del = matrix[i-1][j] + gap;
+            }
 
             std::vector<std::pair<int, Direction>> v;
             v.push_back(std::make_pair(subs, diag));
@@ -331,6 +361,8 @@ int Align(
         int match,
         int mismatch,
         int gap,
+        int gap_open,
+        int gap_extend,
         std::string* cigar,
         unsigned int* target_begin,
         bool matrix_print) {
@@ -341,6 +373,7 @@ int Align(
                     query, query_len,
                     target, target_len,
                     match, mismatch, gap,
+                    gap_open, gap_extend,
                     cigar, target_begin,
                     matrix_print);
             break;
@@ -349,6 +382,7 @@ int Align(
                     query, query_len,
                     target, target_len,
                     match, mismatch, gap,
+                    gap_open, gap_extend,
                     cigar, target_begin,
                     matrix_print);
             break;
@@ -357,6 +391,7 @@ int Align(
                     query, query_len,
                     target, target_len,
                     match, mismatch, gap,
+                    gap_open, gap_extend,
                     cigar, target_begin,
                     matrix_print);
             break;
@@ -364,4 +399,4 @@ int Align(
     return alignment_score;
 }
 
-}  // namespace ivory_aligner
+}  // namespace ivory

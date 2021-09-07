@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-namespace ivory_aligner {
+namespace ivory {
 
 enum AlignmentType { global, local, semiglobal };
 
@@ -18,6 +18,8 @@ int GlobalAlignment(
         int match,
         int mismatch,
         int gap,
+        int gap_open,
+        int gap_extend,
         std::string* cigar,
         unsigned int* target_begin,
         bool matrix_print);
@@ -28,6 +30,8 @@ int LocalAlignment(
         int match,
         int mismatch,
         int gap,
+        int gap_open,
+        int gap_extend,
         std::string* cigar,
         unsigned int* target_begin,
         bool matrix_print);
@@ -38,6 +42,8 @@ int SemiGlobalAlignment(
         int match,
         int mismatch,
         int gap,
+        int gap_open,
+        int gap_extend,
         std::string* cigar,
         unsigned int* target_begin,
         bool matrix_print);
@@ -65,10 +71,12 @@ int Align(
         int match,
         int mismatch,
         int gap,
+        int gap_open = 0,
+        int gap_extend = 0,
         std::string* cigar = nullptr,
         unsigned int* target_begin = nullptr,
         bool matrix_print = false);
 
-}  // namespace ivory_aligner
+}  // namespace ivory
 
 #endif  // INCLUDE_ALIGNER_HPP_

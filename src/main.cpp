@@ -172,20 +172,23 @@ void ProcessArgs(int argc, char** argv,
 void VerboseTest(
         const char* query, unsigned int query_len,
         const char* target, unsigned int target_len,
-        ivory_aligner::AlignmentType type,
+        ivory::AlignmentType type,
         int match,
         int mismatch,
         int gap,
+        int gap_open,
+        int gap_extend,
         bool matrix_print) {
     std::string cigar;
     unsigned int target_begin;
 
     std::cout << "Query sequence: " << query << std::endl
               << "Target sequence: " << target << std::endl;
-    int score = ivory_aligner::Align(
+    int score = ivory::Align(
             query, query_len,
             target, target_len,
             type, match, mismatch, gap,
+            gap_open, gap_extend,
             &cigar, &target_begin,
             matrix_print);
     std::cout << "Alignment score: " << score << std::endl;
@@ -197,12 +200,19 @@ void TestAligner() {
     std::string cigar;
     unsigned int target_begin;
 
-    VerboseTest("GATTACA", 7, "GCATGCU", 7, ivory_aligner::global,
-                1, -1, -1, true);
-    VerboseTest("ACCTAAGG", 8, "GGCTCAATCA", 10, ivory_aligner::local,
-                2, -1, -2, true);
-    VerboseTest("CGATAAA", 7, "ACTCCGAT", 8, ivory_aligner::semiglobal,
-                1, -1, -1, true);
+    VerboseTest("GATTACA", 7, "GCATGCU", 7, ivory::global,
+                1, -1, -1, 0, 0, true);
+    VerboseTest("ACCTAAGG", 8, "GGCTCAATCA", 10, ivory::local,
+                2, -1, -2, 0, 0, true);
+    VerboseTest("CGATAAA", 7, "ACTCCGAT", 8, ivory::semiglobal,
+                1, -1, -1, 0, 0, true);
+
+    VerboseTest("GATTACA", 7, "GCATGCU", 7, ivory::global,
+                1, -1, -1, -2, -1, true);
+    VerboseTest("ACCTAAGG", 8, "GGCTCAATCA", 10, ivory::local,
+                2, -1, -2, -3, -1, true);
+    VerboseTest("CGATAAA", 7, "ACTCCGAT", 8, ivory::semiglobal,
+                1, -1, -1, -2, -1, true);
 }
 
 int main(int argc, char **argv) {
