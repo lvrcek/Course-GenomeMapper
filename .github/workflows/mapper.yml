@@ -1,6 +1,10 @@
 name: build
 
-on: [push, pull_request]
+on: 
+  push:
+    branches: [master]
+  pull_request:
+    brancehs: [master]
 
 env:
   BUILD_TYPE: Release
@@ -30,11 +34,11 @@ jobs:
             os: "ubuntu-18.04",
             compiler: "clang++-4.0"
           }
-        # - {
-        #     name: "MacOS_Latest_GCC_9.4",
-        #     os: "macos-latest",
-        #     compiler: "gcc-9"
-        #   }
+        - {
+            name: "MacOS_11_GCC_9.4",
+            os: "macos-11",
+            compiler: "g++"
+          }
         # - {
         #     name: "MacOS_Latest_Clang_11.0",
         #     os: "macos-latest",
@@ -60,10 +64,10 @@ jobs:
           version: "4.0"
           platform: x64
 
-      - if: ${{ matrix.config.name == 'MacOS_Latest_Clang_11.0' }}
-        run: |
-          sudo xcode-select -s /Applications/Xcode_11.2.1.app/Contents/Developer
-          clang -v
+      # - if: ${{ matrix.config.name == 'MacOS_Latest_Clang_11.0' }}
+      #   run: |
+      #     sudo xcode-select -s /Applications/Xcode_11.2.1.app/Contents/Developer
+      #     clang -v
 
       - name: Configure CMake
         run: cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
