@@ -39,11 +39,11 @@ jobs:
             os: "macos-11",
             compiler: "g++"
           }
-        # - {
-        #     name: "MacOS_Latest_Clang_11.0",
-        #     os: "macos-latest",
-        #     compiler: "clang"
-        #   }
+        - {
+            name: "MacOS_Latest_Clang_11.0",
+            os: "macos-latest",
+            compiler: "clang++"
+          }
     
     name: ${{ matrix.config.name }}
 
