@@ -217,7 +217,7 @@ void TestAligner() {
 
 int main(int argc, char **argv) {
     std::vector<std::unique_ptr<Sequence>> reference, fragments;
-    // TestAligner();
+    TestAligner();
     ProcessArgs(argc, argv, &reference, &fragments);
     PrintStatistics(reference, 1);
     PrintStatistics(fragments, 2);

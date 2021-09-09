@@ -4,6 +4,7 @@
 
 // Test googletest integration
 TEST(BasicTest, HandlesZeroInput) {
+    EXPECT_STRNE("hello", "world");
     ASSERT_EQ(1, 1);
 }
 
