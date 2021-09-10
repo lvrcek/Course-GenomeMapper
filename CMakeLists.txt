@@ -51,6 +51,11 @@ add_executable(ivory_mapper_test test/ivory_mapper_test.cpp)
 target_link_libraries(ivory_mapper_test
     gtest_main
     bioparser::bioparser
+    ivory_alignment_engine
+)
+
+target_include_directories(ivory_mapper_test PUBLIC
+    "include"
 )
 
 include(GoogleTest)
