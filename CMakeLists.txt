@@ -36,6 +36,7 @@ configure_file(include/ivory_config.hpp.in ivory_config.hpp)
 target_link_libraries(ivory_mapper
     bioparser::bioparser
     ivory_alignment_engine
+    ivory_minimizer_engine
 )
 
 target_include_directories(ivory_mapper PUBLIC
@@ -52,6 +53,7 @@ target_link_libraries(ivory_mapper_test
     gtest_main
     bioparser::bioparser
     ivory_alignment_engine
+    ivory_minimizer_engine
 )
 
 target_include_directories(ivory_mapper_test PUBLIC

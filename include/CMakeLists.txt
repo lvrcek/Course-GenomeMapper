@@ -1,1 +1,2 @@
 add_library(ivory_alignment_engine aligner.cpp)
+add_library(ivory_minimizer_engine minimizer.cpp)
