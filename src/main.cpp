@@ -14,6 +14,7 @@
 
 #include "ivory_config.hpp"
 #include "aligner.hpp"
+#include "minimizer.hpp"
 
 
 struct Sequence {
@@ -215,10 +216,17 @@ void TestAligner() {
                 1, -1, -1, -2, -1, true);
 }
 
+void TestMinimizer() {
+    std::string test = "AAGCTCGGTAC";  // 11
+    std::cout << test << std::endl;
+    std::vector<std::tuple<unsigned int, unsigned int, bool>> v = ivory::Minimize(test.c_str(), 11, 3, 5);
+}
+
 int main(int argc, char **argv) {
-    std::vector<std::unique_ptr<Sequence>> reference, fragments;
-    ProcessArgs(argc, argv, &reference, &fragments);
-    PrintStatistics(reference, 1);
-    PrintStatistics(fragments, 2);
+    // std::vector<std::unique_ptr<Sequence>> reference, fragments;
+    // ProcessArgs(argc, argv, &reference, &fragments);
+    // PrintStatistics(reference, 1);
+    // PrintStatistics(fragments, 2);
+    TestMinimizer();
     return 0;
 }
