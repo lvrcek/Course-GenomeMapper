@@ -8,6 +8,32 @@
 
 namespace ivory {
 
+std::string ReverseComplement(std::string s) {
+    std::string rc = "";
+    for (int i = s.size() - 1; i >= 0; i--) {
+        char c = s[i];
+        switch (c) {
+            case 'c':
+            case 'C':
+                rc += "G";
+                break;
+            case 'a':
+            case 'A':
+                rc += "T";
+                break;
+            case 't':
+            case 'T':
+                rc += "A";
+                break;
+            case 'g':
+            case 'G':
+                rc += "C";
+                break;
+        }
+    }
+    return rc;
+}
+
 unsigned int KmerHash(std::string s) {
     std::string new_s = "";
     for (int i = 0; i < s.size(); i++) {
@@ -38,6 +64,34 @@ unsigned int KmerHash(std::string s) {
     return kmer;
 }
 
+unsigned int KmerHashReverse(std::string s) {
+    std::string new_s = "";
+    for (int i = s.size() - 1; i >= 0; i--) {
+        char c = s[i];
+        switch (c) {
+            case 'c':
+            case 'C':
+                new_s += "3";
+                break;
+            case 'a':
+            case 'A':
+                new_s += "2";
+                break;
+            case 'g':
+            case 'G':
+                new_s += "1";
+                break;
+            case 't':
+            case 'T':
+                new_s += "0";
+                break;
+        }
+    }
+    unsigned int kmer = stoi(new_s);
+    std::cout << ReverseComplement(s) << " " << new_s << " " << kmer << std::endl;
+    return kmer;
+}
+
 std::tuple<unsigned int, unsigned int, bool> GetMinKmer(
         const char* sequence, unsigned int sequence_len,
         unsigned int kmer_len, unsigned int window_len,
@@ -56,11 +110,15 @@ std::tuple<unsigned int, unsigned int, bool> GetMinKmer(
         }
         unsigned int kmer_h = KmerHash(kmer);
         unsigned int pos = start + i;
-        bool strand = true;
-
+        // bool strand = true;
         if (kmer_h < minimizer) {
-            t = {kmer_h, pos, strand};
+            t = {kmer_h, pos, true};
             minimizer = kmer_h;
+        }
+        unsigned int kmer_h_rc = KmerHashReverse(kmer);
+        if (kmer_h_rc < minimizer) {
+            t = {kmer_h_rc, pos, false};
+            minimizer = kmer_h_rc;
         }
     }
     std::cout << std::get<0>(t) << " " << std::get<1>(t) << " " << std::get<2>(t) << std::endl;
@@ -73,7 +131,7 @@ std::vector<std::tuple<unsigned int, unsigned int, bool>> Minimize(
         unsigned int window_len) {
     // Slide the window over the string
     // For each window find all the kmers
-    // Fund unsigned int hash for each kmer
+    // Find unsigned int hash for each kmer
     // Take the smallest one for each window
     std::vector<std::tuple<unsigned int, unsigned int, bool>> V;
     for (int start=0; start <= sequence_len - window_len; start++) {
