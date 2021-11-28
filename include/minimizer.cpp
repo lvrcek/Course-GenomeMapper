@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <map>
 
 #include "aligner.hpp"
 
@@ -60,7 +61,7 @@ unsigned int KmerHash(std::string s) {
     }
     
     unsigned int kmer = stoi(new_s);
-    std::cout << s << " " << new_s << " " << kmer << std::endl;
+    // std::cout << s << " " << new_s << " " << kmer << std::endl;
     return kmer;
 }
 
@@ -88,7 +89,7 @@ unsigned int KmerHashReverse(std::string s) {
         }
     }
     unsigned int kmer = stoi(new_s);
-    std::cout << ReverseComplement(s) << " " << new_s << " " << kmer << std::endl;
+    // std::cout << ReverseComplement(s) << " " << new_s << " " << kmer << std::endl;
     return kmer;
 }
 
@@ -151,7 +152,25 @@ std::vector<std::tuple<unsigned int, unsigned int, bool>> Minimize(
 void Minimize(
         std::vector<const char*> sequence, std::vector<unsigned int> sequence_len,
         unsigned int kmer_len,
-        unsigned int window_len) {
+        unsigned int window_len,
+        std::map<unsigned int, std::vector<std::tuple<unsigned int, bool, unsigned int>>>* lookup) {
+    
+    // std::map<unsigned int, std::vector<std::tuple<unsigned int, bool, unsigned int>>> lookup;
+    std::cout << "ayooo" << std::endl;
+
+    for (int i = 0; i < sequence.size(); i++) {
+        std::vector<std::tuple<unsigned int, unsigned int, bool>> minimizers = 
+                Minimize(sequence[i], sequence_len[i], kmer_len, window_len);
+        for (auto & m: minimizers) {
+            (*lookup)[std::get<0>(m)].push_back({i, std::get<2>(m), std::get<1>(m)});
+        }
+    }
+    for (auto it = lookup->begin(); it != lookup->end(); it++) {
+        std::cout << it->first << std::endl;
+        for (auto itt = it->second.begin(); itt != it->second.end(); itt++) {
+            std::cout << std::get<0>(*itt) << " " << std::get<1>(*itt) << " " << std::get<2>(*itt) << std::endl;
+        }
+    }
     return;
 
 }

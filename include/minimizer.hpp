@@ -20,7 +20,8 @@ std::vector<std::tuple<unsigned int, unsigned int, bool>> Minimize(
 void Minimize(
     std::vector<const char*> sequence, std::vector<unsigned int> sequence_len,
     unsigned int kmer_len,
-    unsigned int window_len);
+    unsigned int window_len,
+    std::map<unsigned int, std::vector<std::tuple<unsigned int, bool , unsigned int>>>* lookup);
 
 void Filter(double frequency);
 

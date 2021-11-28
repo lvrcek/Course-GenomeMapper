@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <map>
 
 #include "bioparser/fasta_parser.hpp"
 #include "bioparser/fastq_parser.hpp"
@@ -220,6 +221,10 @@ void TestMinimizer() {
     std::string test = "AAGCTCGGTAC";  // 11
     std::cout << test << std::endl;
     std::vector<std::tuple<unsigned int, unsigned int, bool>> v = ivory::Minimize(test.c_str(), 11, 3, 5);
+    std::vector<const char *> sequences = {"AAGCTCGGTAC", "CCAAGCAAGTTTG"};
+    std::vector<unsigned int> sequence_lens = {11, 13};
+    std::map<unsigned int, std::vector<std::tuple<unsigned int, bool , unsigned int>>> lookup;
+    ivory::Minimize(sequences, sequence_lens, 3, 5, &lookup);
 }
 
 int main(int argc, char **argv) {
